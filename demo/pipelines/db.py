@@ -121,8 +121,6 @@ class DemoPipeline(object):
 
     def spider_closed(self, spider):
 
-        self.file.close()
-
         print ''
         print '----------scrapy finish----------'
         print 'time: ' + str(datetime.datetime.now())
