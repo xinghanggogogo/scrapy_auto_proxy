@@ -4,6 +4,7 @@ __author__ = 'xinghang'
 import scrapy
 import time
 import traceback
+import random
 
 from scrapy.selector import Selector
 from scrapy.http import Request
@@ -19,13 +20,12 @@ class BooksSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        time.sleep(2)
-
-        #访问失败,status ！= 200,再次请求
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.parse, dont_filter=True)
 
+        i = random.randint(1,3)
+        time.sleep(i)
         sel = Selector(response)
         cat_st_list = sel.xpath('/html/body/div[3]/div[1]/div[1]/div/ul/li[1]')
         for i in cat_st_list:
@@ -46,8 +46,9 @@ class BooksSpider(scrapy.Spider):
 
     def catSecondParse(self, response):
 
-        time.sleep(2)
-        #访问失败, 再次请求
+        i = random.randint(1,3)
+        time.sleep(i)
+
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.catSecondParse, dont_filter=True)
@@ -71,6 +72,7 @@ class BooksSpider(scrapy.Spider):
 
         return
 
+    # 3级目录,暂时忽略了。
     # def catThirdParse(self, response):
     #
     #     time.sleep(2)
@@ -99,8 +101,9 @@ class BooksSpider(scrapy.Spider):
 
     def bookListParse(self, response):
 
-        time.sleep(2)
-        #访问失败
+        i = random.randint(1,3)
+        time.sleep(i)
+
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.bookListParse, dont_filter=True)
@@ -126,8 +129,9 @@ class BooksSpider(scrapy.Spider):
 
     def bookContentParse(self, response):
 
-        time.sleep(2)
-        #访问失败
+        i = random.randint(1,3)
+        time.sleep(i)
+
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.catThirdParse, dont_filter=True)
@@ -169,14 +173,6 @@ class BooksSpider(scrapy.Spider):
 
                 if key == 'ISBN13':
                     isbn13 = item.xpath('span/text()').extract()[0].encode('utf8')
-
-            # try:
-            #     test = int(isbn10)
-            #     print test
-            # except:
-            #     isbn10 = sel.xpath('//ul[@class="biblio-info"]/li[7]/span/text()').extract()[0].encode('utf8')
-            #     isbn13 = sel.xpath('//ul[@class="biblio-info"]/li[8]/span/text()').extract()[0].encode('utf8')
-
 
             print '***********'+'book_content'+"************"
             print 'name:' + name

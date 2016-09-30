@@ -20,7 +20,6 @@ class BooksSpider(scrapy.Spider):
 
     def parse(self, response):
 
-        #访问失败,status ！= 200,再次请求
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.parse, dont_filter=True)
@@ -31,7 +30,6 @@ class BooksSpider(scrapy.Spider):
 
         for a in a_list:
 
-            #item = AmazonBooksTypeItem()
             type_name = a.xpath('span[1]/text()').extract()[0].encode('utf8')
             type_book_num = a.xpath('span[2]/text()').extract()[0].encode('utf8')
             type_link = a.xpath('@href[1]').extract()[0].encode('utf8')
@@ -41,13 +39,14 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
+            #item = AmazonBooksTypeItem()
             # item['typeName'] = [n.encode('utf-8') for n in name]
             # item['typeNum'] = [n.encode('utf-8') for n in num]
             # item['typeLink'] = [n.encode('utf-8') for n in link]
             # yield AmazonBooksTypeItem(item)
 
             #按照page爬取book_list
-            for i in range(1, 2): #max=75
+            for i in range(1, 2): #max=5000
                 req = type_link + '&page=' + str(i)
                 yield Request(req, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
         return
@@ -56,7 +55,7 @@ class BooksSpider(scrapy.Spider):
 
         i = random.randint(1,3)
         time.sleep(i)
-        #访问失败, 再次请求
+
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.booksListParse, dont_filter=True)
@@ -67,7 +66,6 @@ class BooksSpider(scrapy.Spider):
         list = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[2]')
 
         for i in list:
-            #item = AmazonBooksListItem()
             book_name = i.xpath('div[2]/a/@title').extract()[0].encode('utf8')
             book_link = i.xpath('div[2]/a/@href').extract()[0].encode('utf8')
             img_url = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[1]/div/div/a/img/@src').extract()[0].encode('utf8')
@@ -77,7 +75,7 @@ class BooksSpider(scrapy.Spider):
             except:
                 author = i.xpath('div[2]/div/span[2]/text()').extract()[0].encode('utf8')
 
-            #有的图书没有第二作者,这里会报错吗
+            #暂时忽略第二作者
             #author2 = i.xpath('div[2]/div/span[3]/a/text()').extract()
             #author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
 
@@ -104,6 +102,7 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
+            #item = AmazonBooksListItem()
             # item['bookName'] = [n.encode('utf-8') for n in name]
             # item['bookAuthor'] = [n.encode('utf-8') for n in author]
             # item['bookAuthor2'] = [n.encode('utf-8') for n in author2]
@@ -125,7 +124,7 @@ class BooksSpider(scrapy.Spider):
 
         i = random.randint(1,3)
         time.sleep(i)
-        #访问失败
+
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.bookContentParse, dont_filter=True)
