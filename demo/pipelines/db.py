@@ -21,7 +21,7 @@ class DemoPipeline(object):
         self.duplicates = {}
         dispatcher.connect(self.spider_closed, signals.spider_closed)
 
-        #文件信息
+        #文件
         self.proxy_file = codecs.open('proxy.json', 'w', encoding='utf-8')
         self.name_file = codecs.open('name.json', 'w', encoding='utf-8')
 
