@@ -223,6 +223,7 @@ class BooksSpider(scrapy.Spider):
         #
         # return
 
+    # 爬取图书评论
     # def bookCommentParse(self, response):
     #
     #     time.sleep(2)
