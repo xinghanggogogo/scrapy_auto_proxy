@@ -134,7 +134,7 @@ class BooksSpider(scrapy.Spider):
 
         name = response.meta['name']
         author = response.meta['author']
-        category = response.meta['category']
+        category = response.meta['category'].lower() # 格式处理
         book_link = response.meta['link']
         img_url = response.meta['img_url']
         price = response.meta['price']

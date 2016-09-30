@@ -14,7 +14,7 @@ from demo.pipelines.stat import *
 def makeurls():
     word_list = [chr(i).upper() for i in range(97, 123)]
     for word in word_list:
-        for page in range(1,7):
+        for page in range(1,2):
             url = 'http://ename.dict.cn/list/all/%s/%s'% (word, page)
             yield url
 

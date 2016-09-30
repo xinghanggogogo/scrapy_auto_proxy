@@ -7,6 +7,8 @@ itemtotal = 0
 successitem = 0
 failitem = 0
 syncitem = 0
+writesuccess = 0
+writefail = 0
 
 def staturltotal():
     global urltotal

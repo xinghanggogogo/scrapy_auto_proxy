@@ -41,7 +41,7 @@ class BooksSpider(scrapy.Spider):
 
             for i in range(1, 2):
                 req = cat_st_link
-                yield Request(req, meta={'category': cat_st_link}, callback=self.catSecondParse, dont_filter=True)
+                yield Request(req, meta={'category': cat_st_name}, callback=self.catSecondParse, dont_filter=True)
         return
 
     def catSecondParse(self, response):
@@ -72,7 +72,7 @@ class BooksSpider(scrapy.Spider):
 
         return
 
-    # 3级目录,暂时忽略了。
+    # 3级目录,暂时忽略
     # def catThirdParse(self, response):
     #
     #     time.sleep(2)
