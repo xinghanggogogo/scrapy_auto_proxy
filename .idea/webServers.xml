@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f9803f7e-ca40-4d37-a61f-50e352d7f0ec" name="spider" url="http://101.254.157.124/">
+        <fileTransfer host="101.254.157.124" port="3026" accessType="SFTP" username="xinghang">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="3026" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

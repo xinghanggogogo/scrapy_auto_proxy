@@ -516,7 +516,7 @@ USER_AGENTS = [
 ]
 
 PROXIES = [
-      {'ip_port': '122.228.179.178:80', 'user_pass': ''},
+    # {'ip_port': '122.228.179.178:80', 'user_pass': ''},
     # {'ip_port': '119.254.84.90', 'user_pass': ''},
     #  {'ip_port': ':', 'user_pass': ''},
 

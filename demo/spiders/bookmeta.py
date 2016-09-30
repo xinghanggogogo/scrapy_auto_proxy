@@ -39,7 +39,7 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
-            for i in range(1, 2): #max=75
+            for i in range(1, 2):
                 req = cat_st_link
                 yield Request(req, meta={'category': cat_st_link}, callback=self.catSecondParse, dont_filter=True)
         return
@@ -56,11 +56,9 @@ class BooksSpider(scrapy.Spider):
         sel = Selector(response)
 
         print 'response_url:'+response.url
-        #print 'response_header:'+response.header
-        #print 'response_body:'+response.body
 
-        cat_sec_name = sel.xpath('ul[@class="category-list sidebar-nav has-parent"]').extract()[0].encode('utf8')
-        cat_sec_link = sel.xpath('ul[@class="category-list sidebar-nav has-parent"]').extract()[0].encode('utf8')
+        cat_sec_name = sel.xpath('//ul[@class="category-list sidebar-nav has-parent"]/li[4]/a/text()').extract()[0].encode('utf8').strip()
+        cat_sec_link = sel.xpath('//ul[@class="category-list sidebar-nav has-parent"]/li[4]/a/@href').extract()[0].encode('utf8').strip()
 
         print 10 * '*'+'second_category'+10 * '*'
         print 'cat_nd_name:'+cat_sec_name
@@ -107,21 +105,22 @@ class BooksSpider(scrapy.Spider):
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.bookListParse, dont_filter=True)
 
+        category = response.meta['category']
+
         sel = Selector(response)
         book_list = sel.xpath('/html/body/div[3]/div[2]/div[3]/div/div/div/div/div')
         for i in book_list:
 
-            book_name = i.xpath('div[2]/h3/a/text()').extract().encode('utf8')
-            book_link = i.xpath('div[2/he3/a/@href').extract().encode('utf8')
+            book_name = i.xpath('div[2]/h3/a/text()').extract()[0].encode('utf8').strip()
+            book_link = i.xpath('div[2]/h3/a/@href').extract()[0].encode('utf8').strip()
 
-            print 10 * '*'+'book_list'+10 * '*'
+            print '************'+'book_list'+'****************'
             print 'book_name:'+book_name
             print 'book_link:'+book_link
-            print 10 * '*'
             print ''
 
             req = book_link
-            yield Request(req, callback=self.bookContentParse, dont_filter=True)
+            yield Request(req, meta={'category':category}, callback=self.bookContentParse, dont_filter=True)
 
         return
 
@@ -133,6 +132,8 @@ class BooksSpider(scrapy.Spider):
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.catThirdParse, dont_filter=True)
         sel = Selector(response)
+
+        category = response.meta['category']
 
         try:
             name = sel.xpath('//h1[@itemprop="name"]/text()').extract()[0].encode('utf8')
@@ -146,11 +147,6 @@ class BooksSpider(scrapy.Spider):
 
             author = sel.xpath('//div[@class="author-info"]/a/text()').extract()[0].encode('utf8')
             author = author.strip()
-
-            try:
-                category = sel.xpath('//ol[@class="breadcrumb"]/li[3]/text()').extract()[0].encode('utf8')
-            except:
-                category = ''
 
             info_path = sel.xpath('//ul[@class="biblio-info"]/li')
             for item in info_path:
@@ -181,6 +177,8 @@ class BooksSpider(scrapy.Spider):
             #     isbn10 = sel.xpath('//ul[@class="biblio-info"]/li[7]/span/text()').extract()[0].encode('utf8')
             #     isbn13 = sel.xpath('//ul[@class="biblio-info"]/li[8]/span/text()').extract()[0].encode('utf8')
 
+
+            print '***********'+'book_content'+"************"
             print 'name:' + name
             print 'img_url:' + img_url
             print 'author:' + author
@@ -191,9 +189,9 @@ class BooksSpider(scrapy.Spider):
             print 'publish_city:' + publication_city
             print 'isbn10:' + isbn10
             print 'isbn13:' + isbn13
+            print ''
 
             # item = ebookItem()
-            #
             # item['name'] = name
             # item['img_url'] = img_url
             # item['author'] = author
@@ -206,7 +204,7 @@ class BooksSpider(scrapy.Spider):
             # item['isbn13'] = isbn13
 
             statitemtotal()
-            yield item
+            # yield item
 
         except Exception,e:
             print traceback.print_exc()
