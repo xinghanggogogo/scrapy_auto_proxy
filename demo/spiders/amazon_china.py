@@ -185,11 +185,6 @@ class BooksSpider(scrapy.Spider):
             # yield AmazonBookCommentItem(item)
 
 
-
-
-
-
-
 # import traceback
 # import  sys
 # reload(sys)

@@ -24,10 +24,12 @@ class BooksSpider(scrapy.Spider):
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.parse, dont_filter=True)
 
+
+        print '0000000000000000000000000000000000'
         i = random.randint(1,3)
         time.sleep(i)
         sel = Selector(response)
-        cat_st_list = sel.xpath('/html/body/div[3]/div[1]/div[1]/div/ul/li[1]')
+        cat_st_list = sel.xpath('/html/body/div[5]/div[1]/div[1]/div/ul/li[1]')
         for i in cat_st_list:
 
             cat_st_name = i.xpath('a/text()').extract()[0].encode('utf8').strip()
@@ -111,7 +113,7 @@ class BooksSpider(scrapy.Spider):
         category = response.meta['category']
 
         sel = Selector(response)
-        book_list = sel.xpath('/html/body/div[3]/div[2]/div[3]/div/div/div/div/div')
+        book_list = sel.xpath('.//div[@class="book-item"]')
         for i in book_list:
 
             book_name = i.xpath('div[2]/h3/a/text()').extract()[0].encode('utf8').strip()
@@ -144,12 +146,16 @@ class BooksSpider(scrapy.Spider):
             img_url = sel.xpath('//img[@class="book-img"]/@src').extract()[0].encode('utf8')
 
             try:
-                introduction = sel.xpath('//p[@itemprop="description"]/text()').extract()[0].encode('utf8')
+                try:
+                    introduction = sel.xpath('//p[@itemprop="description"]/text()').extract()[0].encode('utf8')
+                except:
+                    introduction = sel.xpath('//div[@class="trunc-content"]/p/text()').extract()[0].encode('utf8')
             except:
-                introduction = sel.xpath('//div[@class="trunc-content"]/p/text()').extract()[0].encode('utf8')
+                introduction = sel.xpath('//div[@class="item-excerpt trunc"]/text()').extract()[0].encode('utf8')
+
             introduction = introduction.strip()
 
-            author = sel.xpath('//div[@class="author-info"]/a/text()').extract()[0].encode('utf8')
+            author = sel.xpath('//div[@class="author-info hidden-md"]/a/text()').extract()[0].encode('utf8')
             author = author.strip()
 
             info_path = sel.xpath('//ul[@class="biblio-info"]/li')

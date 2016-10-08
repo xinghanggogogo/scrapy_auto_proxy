@@ -102,7 +102,7 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
-            #item = AmazonBooksListItem()
+            # item = AmazonBooksListItem()
             # item['bookName'] = [n.encode('utf-8') for n in name]
             # item['bookAuthor'] = [n.encode('utf-8') for n in author]
             # item['bookAuthor2'] = [n.encode('utf-8') for n in author2]

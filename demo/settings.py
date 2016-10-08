@@ -515,13 +515,13 @@ USER_AGENTS = [
    "SearchExpress",
 ]
 
-PROXIES = [
-      {'ip_port': '122.228.179.178:80', 'user_pass': 'asdf'},
-    # {'ip_port': '119.254.84.90', 'user_pass': ''},
-    #  {'ip_port': ':', 'user_pass': ''},
-
-]
-
+# PROXIES = [
+#     #  {'ip_port': '122.228.179.178:80', 'user_pass': 'asdf'},
+#        {'ip_port': '119.254.84.90', 'user_pass': ''},
+#     #  {'ip_port': '45.76.103.234:8838', 'user_pass': 'c97fce048'},
+#
+# ]
+#
 # DOWNLOADER_MIDDLEWARES = {
 #    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
 #    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,

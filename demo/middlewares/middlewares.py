@@ -28,6 +28,7 @@ class ProxyMiddleware(object):
             encoded_user_pass = base64.encodestring(proxy['user_pass'])
             request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
             print "**********Proxy need password:" + proxy['ip_port']
+
         else:
             print "**********Proxy dont need password:" + proxy['ip_port']
             request.meta['proxy'] = "http://%s" % proxy['ip_port']
