@@ -11,10 +11,6 @@ import traceback
 #from demo.items.oneItem import *
 from demo.pipelines.stat import *
 
-def makeurls():
-    for one in range(1, 1486):
-        url = 'http://wufazhuce.com/one/%s' % one
-        yield url
 
 class oneSipder(Spider):
 
@@ -22,9 +18,18 @@ class oneSipder(Spider):
     download_delay = 0.5
     allowed_domains = ["wufazhuce.com"]
 
-    start_urls = makeurls()
+    def start_requests(self):
+        for one in range(1485, 1486):
+                url = 'http://wufazhuce.com/one/%s' % one
+                yield Request(
+                    url,
+                    headers={ 'Referer': 'http://wufazhuce.com' },
+                    callback=self.parse_item
+                )
 
-    def parse(self, response):
+
+    def parse_item(self, response):
+
         print '*****************************************************'
         print response.url
         print '*****************************************************'

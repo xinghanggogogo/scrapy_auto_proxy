@@ -65,7 +65,7 @@ class BooksSpider(scrapy.Spider):
         sel = Selector(response)
         list = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[2]')
 
-        for i in list:
+        for i in list[0:1]:
             book_name = i.xpath('div[2]/a/@title').extract()[0].encode('utf8')
             book_link = i.xpath('div[2]/a/@href').extract()[0].encode('utf8')
             img_url = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[1]/div/div/a/img/@src').extract()[0].encode('utf8')
@@ -166,19 +166,12 @@ class BooksSpider(scrapy.Spider):
                         isbn13 += isbn13_get[i]
 
         #这是一个list
-        introduction = sel.xpath('.//*[@id="iframeContent"]').extract()
+        introduction = sel.xpath('//*[@id="iframeContent"]/p[1]/span/text()').extract()
         if len(introduction) < 1:
             introduction = sel.xpath('.//*[@id="bookDescription_feature_div"]/noscript/div').extract()
         introduction = introduction[0].encode('utf8')
 
         comment_link = sel.xpath('.//div[@id="revSum"]/div[2]/div/div[1]/a/@href').extract()[0].encode('utf8')
-        commentnum = sel.xpath('.//div[@id="revF"]/div/a/text()').extract()[0].encode('utf8').strip()
-
-        #取出数字
-        comment_num = ''
-        for i in range(len(commentnum)):
-            if '0' <= commentnum[i] <= '9':
-                comment_num += commentnum[i]
 
         print 10 * '*'+'bookcontent'
         print 'content_book_name:' + name
@@ -194,7 +187,6 @@ class BooksSpider(scrapy.Spider):
         print 'content_book_isbn10:' + isbn10
         print 'content_book_isbn13:' + isbn13
         print 'content_comment_link:' + comment_link
-        print 'content_comment_num:' + comment_num
         print 10 * '*'
         print ''
 
@@ -208,52 +200,49 @@ class BooksSpider(scrapy.Spider):
         # item['publisher'] = publisher
         # item['isbn10'] = isbn10
         # item['isbn13'] = isbn13
-        #
+
         # statitemtotal()
         # yield item
-        #
-        #
-        # try:
-        #     pageNum = (int(comment_num) / 10) + 1
-        #     for i in range(1, pageNum):
-        #         req = comment_link[0] + '?pageNumber=' + str(i)
-        #         yield Request(req, meta={'bookName': name}, callback=self.bookCommentParse, dont_filter=True)
-        # except:
-        #     pass
-        #
-        # return
 
-    # 爬取图书评论
-    # def bookCommentParse(self, response):
-    #
-    #     time.sleep(2)
-    #     #访问失败
-    #     if response.status != 200:
-    #         time.sleep(60)
-    #         yield Request(response.url, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
-    #
-    #     self.pipeline = "bookComment"
-    #     sel = Selector(response)
-    #     comment_list = sel.xpath('.//div[@id="cm_cr-review_list"]/div')
-    #
-    #     for i in comment_list:
-    #
-    #         comment_star = i.xpath('div[1]/a[1]/i/span/text()').extract()[0].encode('utf8')
-    #         comment_title = i.xpath('div[1]/a[2]/text()').extract().extract[0].encode('utf8')
-    #         comment_time = i.xpath('div[2]/span[4]/text()').extract()[0].encode('utf8')
-    #         content = i.xpath('div[4]/span/text()').extract()[0].encode('utf8')
-    #
-    #         print 10 * '*'+'bookcomment'
-    #         print 'book_comment_star:'+comment_star
-    #         print 'book_comment_title:'+comment_title
-    #         print 'book_comment_time'+comment_time
-    #         print 'book_comment_content'+content
-    #         print 10 * '*'
-    #
-    #         item = AmazonBookCommentItem()
-    #         item['bookName'] = response.meta['bookName']
-    #         item['bookCommentStar'] = [n.encode('utf-8') for n in star]
-    #         item['bookCommentTitle'] = [n.encode('utf-8') for n in title]
-    #         item['bookCommentTime'] = [n.encode('utf-8') for n in time]
-    #         item['bookCommentContent'] = [n.encode('utf-8') for n in content]
-    #         yield AmazonBookCommentItem(item)
+        try:
+            req = comment_link
+            yield Request(req, meta={'bookName': name}, callback=self.bookCommentParse, dont_filter=True)
+        except:
+            pass
+
+        return
+
+    def bookCommentParse(self, response):
+
+        i = random.randint(1,3)
+        time.sleep(i)
+
+        if response.status != 200:
+            time.sleep(60)
+            yield Request(response.url, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
+
+        sel = Selector(response)
+
+        comment_list = sel.xpath('//div[@class="a-section review"]')
+
+        for i in comment_list:
+
+            comment_title = i.xpath('div[1]/a[2]/text()').extract()[0].encode('utf8')
+            comment_time = i.xpath('div[2]/span[4]/text()').extract()[0].encode('utf8')
+            content = i.xpath('div[4]/span/text()').extract()[0].encode('utf8')
+
+            print ''
+            print 10 * '*'+'bookcomment'
+            print 'book_comment_title:'+comment_title
+            print 'book_comment_time'+comment_time
+            print 'book_comment_content'+content
+            print 10 * '*'
+            print ''
+
+            # item = AmazonBookCommentItem()
+            # item['bookName'] = response.meta['bookName']
+            # item['bookCommentStar'] = [n.encode('utf-8') for n in star]
+            # item['bookCommentTitle'] = [n.encode('utf-8') for n in title]
+            # item['bookCommentTime'] = [n.encode('utf-8') for n in time]
+            # item['bookCommentContent'] = [n.encode('utf-8') for n in content]
+            # yield AmazonBookCommentItem(item)

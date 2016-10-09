@@ -515,22 +515,22 @@ USER_AGENTS = [
    "SearchExpress",
 ]
 
-# PROXIES = [
-#     #  {'ip_port': '122.228.179.178:80', 'user_pass': 'asdf'},
-#        {'ip_port': '119.254.84.90', 'user_pass': ''},
-#     #  {'ip_port': '45.76.103.234:8838', 'user_pass': 'c97fce048'},
-#
-# ]
-#
-# DOWNLOADER_MIDDLEWARES = {
-#    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
-#    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
-#    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 351,
-#
-#    'demo.middlewares.middlewares.ProxyMiddleware': 100,
-#    'demo.middlewares.middlewares.RandomUserAgent': 401,
-#
-# }
+PROXIES = [
+    #    {'ip_port': '122.228.179.178:80', 'user_pass': ''},
+        {'ip_port': '119.254.84.90', 'user_pass': ''},
+    #   {'ip_port': '45.76.103.234:8838', 'user_pass': 'c97fce048'},
+
+]
+
+DOWNLOADER_MIDDLEWARES = {
+   'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+   'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
+   'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 351,
+
+   'demo.middlewares.middlewares.ProxyMiddleware': 100,
+   #'demo.middlewares.middlewares.RandomUserAgent': 401,
+
+}
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS=32
