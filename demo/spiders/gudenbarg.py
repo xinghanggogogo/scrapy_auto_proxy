@@ -12,12 +12,33 @@ from scrapy.http import Request
 from demo.items.ebookItem import *
 from demo.pipelines.stat import *
 
-def star_urls():
-    res = []
-    for i in range(52271, 52272):
-        url = 'http://www.gutenberg.org/ebooks/53149'
-        res.append(url)
-    return res
+from ghost import Ghost
+from scrapy import log
+import re
+class Cookieutil:
+
+    def __init__(self,url):
+        log.msg('init cookieutil class ,will be get %s cookie information!' %url, log.INFO)
+        gh = Ghost(download_images=False,display=False)
+        gh.open(url)
+        gh.open(url)
+        gh.save_cookies("cookie.txt")
+        gh.exit()
+
+    def getCookie(self):
+        cookie = ''
+        with open("cookie.txt") as f:
+            temp = f.readlines()
+            for index in temp:
+                cookie += self.parse_oneline(index).replace('\"','')
+        return cookie[:-1]
+
+    def parse_oneline(self,src):
+        oneline = ''
+        if re.search("Set-Cookie",src):
+            oneline = src.split(';')[0].split(':')[-1].strip()+';'
+        return oneline
+
 
 class gudenbargSipder(Spider):
 
@@ -25,8 +46,15 @@ class gudenbargSipder(Spider):
     download_delay = 5
     allowed_domains = ["gudenberg.org"]
 
+    def star_urls(self):
+        res = []
+        for i in range(52271, 52272):
+            url = 'http://www.gutenberg.org/ebooks/53149'
+            res.append(url)
+        return res
+
     def start_requests(self):
-        urls = star_urls()
+        urls = self.star_urls()
         print urls
         for url in urls:
             yield Request(url, cookies={'session_id': 'b909dc6990dc1edc957ca3d00d4bc170783cdb8d',

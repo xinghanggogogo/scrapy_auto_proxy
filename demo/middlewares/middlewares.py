@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import random
 import base64
 
@@ -8,6 +10,7 @@ class RandomUserAgent(object):
     def __init__(self, agents):
         self.agents = agents
 
+    #通过crawler方法获得setting配置
     @classmethod
     def from_crawler(cls, crawler):
         return cls(crawler.settings.getlist('USER_AGENTS'))
@@ -20,6 +23,7 @@ class RandomUserAgent(object):
 
 class ProxyMiddleware(object):
 
+    #通过import方法获得setting配置
     def process_request(self, request, spider):
         proxy = random.choice(PROXIES)
 
