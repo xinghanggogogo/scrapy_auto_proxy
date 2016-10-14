@@ -8,6 +8,7 @@ import codecs
 
 from demo.models.namemodel import *
 from demo.models.ebookmodel import *
+from demo.models.proxymodel import *
 from demo.items.nameItem import *
 from demo.items.ebookItem import *
 from demo.items.proxyItem import *
@@ -62,10 +63,30 @@ class DemoPipeline(object):
 
         #爬取代理信息，写入json文件
         if isinstance(item, proxyItem):
-
             try:
-                line = json.dumps(dict(item), ensure_ascii=False) + "\n"
-                self.proxy_file.write(line)
+                model = proxymodel()
+                content = ''
+                for k, v in item.iteritems():
+                    setattr(model, k, v)
+                    if v is not None:
+                        try:
+                            if k == 'ip':
+                                content += v
+                            if k == 'port':
+                                content += v
+                        except Exception,e:
+                            print "key:",k,"value:",v
+                            print traceback.print_exc()
+                    else:
+                        content += ""
+
+                model.md5 = hashlib.md5(content).hexdigest()
+                model.create_time = datetime.datetime.now()
+                model.update_time = datetime.datetime.now()
+                model.flag = 0
+                model.product = None
+
+                model.save()
                 statsuccessitem()
 
             except Exception, e:

@@ -71,8 +71,7 @@ class BooksSpider(scrapy.Spider):
             book_link = i.xpath('div[2]/a/@href').extract()[0].encode('utf8')
             author = i.xpath('div[2]/div/span[2]/text()').extract()[0].encode('utf8')
 
-            #有的图书没有第二作者,这里会报错吗
-            author2 = i.xpath('div[2]/div/span[3]/text()').extract()
+            #author2 = i.xpath('div[2]/div/span[3]/text()').extract()
             #author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
 
             publication_date= i.xpath('div[2]/span[3]/text()').extract()[0].encode('utf8')

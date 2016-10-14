@@ -527,7 +527,7 @@ DOWNLOADER_MIDDLEWARES = {
    'scrapy.downloadermiddlewares.downloadtimeout.DownloadTimeoutMiddleware': 350,
    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 351,
 
-   'demo.middlewares.middlewares.ProxyMiddleware': 100,
+   #'demo.middlewares.middlewares.ProxyMiddleware': 100,
    #'demo.middlewares.middlewares.RandomUserAgent': 401,
 
 }

@@ -2,8 +2,13 @@
 
 import random
 import base64
-
+import tornado
+import json
+import tornado.httpclient
+import tornado.ioloop
+from demo.models.proxymodel import *
 from demo.settings import PROXIES
+from demo.utils import proxy_utils
 
 class RandomUserAgent(object):
 
@@ -23,16 +28,37 @@ class RandomUserAgent(object):
 
 class ProxyMiddleware(object):
 
+    def __init__(self):
+        self.utils = proxy_utils
+
     #通过import方法获得setting配置
+    # def process_request(self, request, spider):
+    #     proxy = random.choice(PROXIES)
+    #
+    #     if proxy['user_pass']:
+    #         request.meta['proxy'] = "http://%s" % proxy['ip_port']
+    #         encoded_user_pass = base64.encodestring(proxy['user_pass'])
+    #         request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
+    #         print "**********Proxy need password:" + proxy['ip_port']
+    #
+    #     else:
+    #         print "**********Proxy dont need password:" + proxy['ip_port']
+    #         request.meta['proxy'] = "http://%s" % proxy['ip_port']
+
+    #动态抓取proxy自动配置
     def process_request(self, request, spider):
-        proxy = random.choice(PROXIES)
+        proxies = proxymodel.select()
+        proxy = proxymodel.select().order_by(fn.Random()).get()
+        while not self.utils.test_valid(proxy):
 
-        if proxy['user_pass']:
-            request.meta['proxy'] = "http://%s" % proxy['ip_port']
-            encoded_user_pass = base64.encodestring(proxy['user_pass'])
-            request.headers['Proxy-Authorization'] = 'Basic ' + encoded_user_pass
-            print "**********Proxy need password:" + proxy['ip_port']
+            #删除无效代理
+            unvalid_proxy = proxymodel.get(proxymodel.id == proxy.id)
+            unvalid_proxy.delete_instance()
 
-        else:
-            print "**********Proxy dont need password:" + proxy['ip_port']
-            request.meta['proxy'] = "http://%s" % proxy['ip_port']
+            proxy = random.choice(proxies)
+
+        request.meta['proxy'] = "http://%s" % (proxy.ip + ':' + proxy.port)
+        print "**********Proxy dont need password:" + proxy['ip_port']
+
+
+
