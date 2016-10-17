@@ -12,7 +12,7 @@ from demo.items.nameItem import *
 from demo.pipelines.stat import *
 
 def makeurls():
-    word_list = [chr(i).upper() for i in range(97, 123)]
+    word_list = [chr(i).upper() for i in range(122, 123)]    #97~123
     for word in word_list:
         for page in range(1,2):
             url = 'http://ename.dict.cn/list/all/%s/%s'% (word, page)
@@ -28,8 +28,8 @@ class thundernamesSipder(Spider):
     #start_urls = ['http://ename.dict.cn/list/all/A/1']
 
     def parse(self, response):
-        print '*****************************************************'
-        print response.url
+        print '****************************************************#'
+        print response.body
         print '*****************************************************'
         staturltotal()
 
@@ -137,4 +137,4 @@ class thundernamesSipder(Spider):
         item['masters'] = masterstr
 
         statitemtotal()
-        yield item
+        # yield item

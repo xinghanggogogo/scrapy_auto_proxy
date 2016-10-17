@@ -9,9 +9,12 @@ import codecs
 from demo.models.namemodel import *
 from demo.models.ebookmodel import *
 from demo.models.proxymodel import *
+from demo.models.bookmetamodel import *
+from demo.models.bookcommentmodel import *
 from demo.items.nameItem import *
 from demo.items.ebookItem import *
 from demo.items.proxyItem import *
+from demo.items.bookmetaItem import *
 from demo.pipelines.stat import *
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
@@ -119,6 +122,70 @@ class DemoPipeline(object):
                             if k == 'isbn10':
                                 content += v
                             if k == 'isbn13':
+                                content += v
+                        except Exception,e:
+                            print "key:",k,"value:",v
+                            print traceback.print_exc()
+                    else:
+                        content += ""
+
+                model.md5 = hashlib.md5(content).hexdigest()
+                model.create_time = datetime.datetime.now()
+                model.update_time = datetime.datetime.now()
+                model.flag = 0
+                model.product = None
+
+                model.save()
+                statsuccessitem()
+
+            except Exception, e:
+                print traceback.print_exc()
+                statfailitem()
+                pass
+
+        if isinstance(item, bookmetaItem):
+            try:
+                model = bookmetaModel()
+                content = ''
+                for k, v in item.iteritems():
+                    setattr(model, k, v)
+                    #用isbn10和isbn13生成md5做唯一性标示
+                    if v is not None:
+                        try:
+                            if k == 'isbn10':
+                                content += v
+                            if k == 'isbn13':
+                                content += v
+                        except Exception,e:
+                            print "key:",k,"value:",v
+                            print traceback.print_exc()
+                    else:
+                        content += ""
+
+                model.md5 = hashlib.md5(content).hexdigest()
+                model.create_time = datetime.datetime.now()
+                model.update_time = datetime.datetime.now()
+                model.flag = 0
+                model.product = None
+
+                model.save()
+                statsuccessitem()
+
+            except Exception, e:
+                print traceback.print_exc()
+                statfailitem()
+                pass
+
+        if isinstance(item, bookcommentItem):
+            try:
+                model = bookcommentModel()
+                content = ''
+                for k, v in item.iteritems():
+                    setattr(model, k, v)
+                    #用isbn10和isbn13生成md5做唯一性标示
+                    if v is not None:
+                        try:
+                            if k == 'title':
                                 content += v
                         except Exception,e:
                             print "key:",k,"value:",v

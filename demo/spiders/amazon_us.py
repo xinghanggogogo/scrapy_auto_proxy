@@ -4,9 +4,11 @@ __author__ = 'xinghang'
 import scrapy
 import time
 import random
+
 from scrapy.selector import Selector
 from scrapy.http import Request
-
+from demo.pipelines.stat import *
+from demo.items.bookmetaItem import *
 
 class BooksSpider(scrapy.Spider):
     name = "amazon_us"
@@ -18,11 +20,19 @@ class BooksSpider(scrapy.Spider):
         'https://www.amazon.com/books-used-books-textbooks/b/ref=nav_shopall_bo?ie=UTF8&node=283155',
     )
 
+    headers = {
+                  'Accept': 'text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, * / *;q = 0.8',
+                  'Accept - Encoding': 'gzip, deflate, sdch',
+                  'Accept - Language': 'zh - CN, zh;q = 0.8',
+                  'Cache - Control': 'max - age = 0',
+                  'Connection': 'keep - alive',
+              },
+
     def parse(self, response):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, meta=response.meta, callback=self.parse, dont_filter=True)
+            yield Request(response.url, headers=self.headers, callback=self.parse, dont_filter=True)
 
         self.pipeline = "booksType"
         sel = Selector(response)
@@ -48,7 +58,7 @@ class BooksSpider(scrapy.Spider):
             #按照page爬取book_list
             for i in range(1, 2): #max=5000
                 req = type_link + '&page=' + str(i)
-                yield Request(req, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
+                yield Request(req, headers=self.headers, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
         return
 
     def booksListParse(self, response):
@@ -58,7 +68,7 @@ class BooksSpider(scrapy.Spider):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, meta=response.meta, callback=self.booksListParse, dont_filter=True)
+            yield Request(response.url, headers=self.headers, meta=response.meta, callback=self.booksListParse, dont_filter=True)
 
         self.pipeline = "booksList"
         category = response.meta['category']
@@ -114,6 +124,7 @@ class BooksSpider(scrapy.Spider):
 
             req = book_link
             yield Request(req,
+                          headers=self.headers,
                           meta={'name': book_name, 'author': author, 'link': book_link, 'price': price, 'hot_level': hot_level, 'date': date, 'img_url': img_url, 'category':category},
                           callback=self.bookContentParse,
                           dont_filter=True)
@@ -190,23 +201,24 @@ class BooksSpider(scrapy.Spider):
         print 10 * '*'
         print ''
 
-        # item = ebookItem()
-        # item['name'] = name
-        # item['img_url'] = img_url
-        # item['author'] = author
-        # item['category'] = category
-        # item['introduction'] = introduction
-        # item['publication_date'] = publication_date
-        # item['publisher'] = publisher
-        # item['isbn10'] = isbn10
-        # item['isbn13'] = isbn13
+        item = bookmetaItem()
+        item['name'] = name
+        item['img_url'] = img_url
+        item['author'] = author
+        item['category'] = category
+        item['introduction'] = introduction
+        item['publication_date'] = publication_date
+        item['publisher'] = publisher
+        item['isbn10'] = isbn10
+        item['isbn13'] = isbn13
+        item['hot_level'] = hot_level
 
-        # statitemtotal()
-        # yield item
+        statitemtotal()
+        yield item
 
         try:
             req = comment_link
-            yield Request(req, meta={'bookName': name}, callback=self.bookCommentParse, dont_filter=True)
+            yield Request(req, headers=self.headers, meta={'bookName': name, 'isbn':isbn13}, callback=self.bookCommentParse, dont_filter=True)
         except:
             pass
 
@@ -219,7 +231,7 @@ class BooksSpider(scrapy.Spider):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
+            yield Request(response.url, headers=self.headers, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
 
         sel = Selector(response)
 
@@ -239,10 +251,10 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
-            # item = AmazonBookCommentItem()
-            # item['bookName'] = response.meta['bookName']
-            # item['bookCommentStar'] = [n.encode('utf-8') for n in star]
-            # item['bookCommentTitle'] = [n.encode('utf-8') for n in title]
-            # item['bookCommentTime'] = [n.encode('utf-8') for n in time]
-            # item['bookCommentContent'] = [n.encode('utf-8') for n in content]
-            # yield AmazonBookCommentItem(item)
+            item = bookcommentItem()
+            item['book_name'] = response.meta['bookName']
+            item['title'] = comment_title
+            item['content'] = content
+            item['time'] = comment_time
+            item['isbn13'] = response.meta['isbn']
+            yield item

@@ -3,35 +3,53 @@
 import tornado.httpclient
 import tornado.ioloop
 import json
+import urllib2
+import time
+import traceback
 
+from tornado import web, gen
 from demo.models.proxymodel import *
 
-def handle_request(response, proxy):
-        if response.error:
-            print "This proxy is not valid", response.error
-            test_count()
+def handle_request(response):
+    if response.error:
+        print "This proxy is not valid"
+        print response.error
+        print response
+        #test_count()
+        return False
 
-        else:
-            print 'Thanks God,this proxy is valid.'
-            return True
+    else:
+        print 'Thanks God,this proxy is valid.'
+        return True
 
 def test_valid(proxy):
 
     ip = proxy.ip
     port = proxy.port
 
-    tornado.httpclient.AsyncHTTPClient.configure("tornado.curl_httpclient.CurlAsyncHTTPClient")
-    http_client = tornado.httpclient.AsyncHTTPClient()
+    cookies = urllib2.HTTPCookieProcessor()
+    proxyHandler = urllib2.ProxyHandler({"http": r'http://%s:%s' % (ip, port)})
+    opener = urllib2.build_opener(cookies, proxyHandler)
+    opener.addheaders = [('User-Agent','Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.63 Safari/537.36')]
+    t1 = time.time()
 
-    request = tornado.httpclient.HTTPRequest(url="http://shikanon.com/", proxy_host=ip, proxy_port=port, connect_timeout=4)
-    is_valid = http_client.fetch(request, callback=handle_request)
-    tornado.ioloop.IOLoop.instance().start()
+    try:
+        print '&&&&&&&&&&'
+        res = opener.open('http://www.baidu.com', timeout=10)
+        print '++++++++++'
+        print res.code
+        print '++++++++++'
+        timeused = time.time() - t1
+        if res.code == 200:
+            print '*****'
+            print ip + ':' + port + '用时：' + str(timeused) +'s'
+            print '*****'
+            return True
+        else:
+            print '*****Proxy 不可用*****'
+            return False
 
-    return is_valid
+    except Exception, e:
+        print traceback.print_exc()
+        return False
 
-def test_count():
-
-    proxy_count = proxymodel.select().count()
-    if proxy_count <20:
-        #再次爬取怎么写..
-        pass
