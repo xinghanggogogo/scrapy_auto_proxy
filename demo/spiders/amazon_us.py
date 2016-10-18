@@ -20,21 +20,12 @@ class BooksSpider(scrapy.Spider):
         'https://www.amazon.com/books-used-books-textbooks/b/ref=nav_shopall_bo?ie=UTF8&node=283155',
     )
 
-    headers = {
-                  'Accept': 'text / html, application / xhtml + xml, application / xml;q = 0.9, image / webp, * / *;q = 0.8',
-                  'Accept - Encoding': 'gzip, deflate, sdch',
-                  'Accept - Language': 'zh - CN, zh;q = 0.8',
-                  'Cache - Control': 'max - age = 0',
-                  'Connection': 'keep - alive',
-              },
-
     def parse(self, response):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, headers=self.headers, callback=self.parse, dont_filter=True)
+            yield Request(response.url, callback=self.parse, dont_filter=True)
 
-        self.pipeline = "booksType"
         sel = Selector(response)
         a_list = sel.xpath('.//div[@class="categoryRefinementsSection"]/ul[1]/li/a[1]')
 
@@ -56,9 +47,9 @@ class BooksSpider(scrapy.Spider):
             # yield AmazonBooksTypeItem(item)
 
             #按照page爬取book_list
-            for i in range(1, 2): #max=5000
+            for i in range(1, 10): #max=5000
                 req = type_link + '&page=' + str(i)
-                yield Request(req, headers=self.headers, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
+                yield Request(req, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
         return
 
     def booksListParse(self, response):
@@ -68,14 +59,14 @@ class BooksSpider(scrapy.Spider):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, headers=self.headers, meta=response.meta, callback=self.booksListParse, dont_filter=True)
+            yield Request(response.url, meta=response.meta, callback=self.booksListParse, dont_filter=True)
 
         self.pipeline = "booksList"
         category = response.meta['category']
         sel = Selector(response)
         list = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[2]')
 
-        for i in list[0:1]:
+        for i in list:
             book_name = i.xpath('div[2]/a/@title').extract()[0].encode('utf8')
             book_link = i.xpath('div[2]/a/@href').extract()[0].encode('utf8')
             img_url = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[1]/div/div/a/img/@src').extract()[0].encode('utf8')
@@ -124,7 +115,6 @@ class BooksSpider(scrapy.Spider):
 
             req = book_link
             yield Request(req,
-                          headers=self.headers,
                           meta={'name': book_name, 'author': author, 'link': book_link, 'price': price, 'hot_level': hot_level, 'date': date, 'img_url': img_url, 'category':category},
                           callback=self.bookContentParse,
                           dont_filter=True)
@@ -145,7 +135,7 @@ class BooksSpider(scrapy.Spider):
 
         name = response.meta['name']
         author = response.meta['author']
-        category = response.meta['category'].lower() # 格式处理
+        category = response.meta['category'].lower() #格式处理
         book_link = response.meta['link']
         img_url = response.meta['img_url']
         price = response.meta['price']
@@ -218,7 +208,7 @@ class BooksSpider(scrapy.Spider):
 
         try:
             req = comment_link
-            yield Request(req, headers=self.headers, meta={'bookName': name, 'isbn':isbn13}, callback=self.bookCommentParse, dont_filter=True)
+            yield Request(req, meta={'bookName': name, 'isbn':isbn13}, callback=self.bookCommentParse, dont_filter=True)
         except:
             pass
 
@@ -231,7 +221,7 @@ class BooksSpider(scrapy.Spider):
 
         if response.status != 200:
             time.sleep(60)
-            yield Request(response.url, headers=self.headers, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
+            yield Request(response.url, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
 
         sel = Selector(response)
 
