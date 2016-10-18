@@ -9,13 +9,14 @@ import time
 
 from demo.models.ebookmodel import *
 
-books_info = ebookModel.select()
+books_info = ebookModel.select().where(ebookModel.id>4000)
 
 for book_info in books_info:
     try:
         img_url = book_info.img_url
         time.sleep(1)
         res = requests.get(img_url, stream=True)
+        print res.content[0:3]
         if res.content[0:3] == 'GIF':
             peewee_sql = ebookModel.update(img_url='').where(ebookModel.isbn10 == book_info.isbn10)
             peewee_sql.execute()

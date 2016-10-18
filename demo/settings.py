@@ -526,7 +526,7 @@ DOWNLOADER_MIDDLEWARES = {
    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware': 351,
 
    #'demo.middlewares.middlewares.ProxyMiddleware': 100,
-   'demo.middlewares.middlewares.RandomUserAgent': 401,
+   #'demo.middlewares.middlewares.RandomUserAgent': 401,
 
 }
 

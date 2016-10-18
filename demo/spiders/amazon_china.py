@@ -47,7 +47,7 @@ class BooksSpider(scrapy.Spider):
             # item['typeLink'] = [n.encode('utf-8') for n in link]
             # yield AmazonBooksTypeItem(item)
 
-            #按照page爬取book_list
+            # 按照page爬取book_list
             for i in range(1, 2): #max=75
                 req = type_link + '&page=' + str(i)
                 yield Request(req, callback=self.booksListParse, dont_filter=True)
@@ -56,7 +56,7 @@ class BooksSpider(scrapy.Spider):
     def booksListParse(self, response):
 
         time.sleep(2)
-        #访问失败, 再次请求
+        # 访问失败, 再次请求
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.booksListParse, dont_filter=True)
@@ -66,13 +66,13 @@ class BooksSpider(scrapy.Spider):
         list = sel.xpath('.//div[@id="mainResults"]/ul/li/div/div/div/div[2]')
 
         for i in list:
-            #item = AmazonBooksListItem()
+            # item = AmazonBooksListItem()
             book_name = i.xpath('div[2]/a/@title').extract()[0].encode('utf8')
             book_link = i.xpath('div[2]/a/@href').extract()[0].encode('utf8')
             author = i.xpath('div[2]/div/span[2]/text()').extract()[0].encode('utf8')
 
-            #author2 = i.xpath('div[2]/div/span[3]/text()').extract()
-            #author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
+            # author2 = i.xpath('div[2]/div/span[3]/text()').extract()
+            # author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
 
             publication_date= i.xpath('div[2]/span[3]/text()').extract()[0].encode('utf8')
             price = i.xpath('div[3]/div[1]/div[2]/a/span/text()').extract()[0].encode('utf8')
