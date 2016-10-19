@@ -125,7 +125,6 @@ class fetch2Sipder(Spider):
                     link = li.xpath('li/a/@href').extract()[0].encode('utf8')
                     if link != '/':
                         link = link
-
             link_online = ''
             if link[0] == '/':
                 link_online = 'http://www.ebookdb.org' + link
