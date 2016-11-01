@@ -50,6 +50,7 @@ class tvSipder(Spider):
                 api_url = 'http://open.douyucdn.cn/api/RoomApi/room/'+room_id
 
                 title = li.xpath('a/@title').extract()[0].encode('utf8')
+
                 anchor = li.xpath('a/div/p/span[1]/text()').extract()[0].encode('utf8')
                 category = li.xpath('a/div/div/span/text()').extract()[0].encode('utf8')
 
