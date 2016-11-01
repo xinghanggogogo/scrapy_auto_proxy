@@ -20,7 +20,7 @@ class oneSipder(Spider):
     name = 'fetch_img'
     allowed_domains = ["amazon.com"]
     def start_requests(self):
-        books_info = ebookModel.select().where(ebookModel.img_url == '')
+        books_info = ebookModel.select().where(ebookModel.img_url == '').order_by(ebookModel.id.desc())
         for book_info in books_info:
             isbn10 = book_info.isbn10
             url = 'https://www.amazon.com/exec/obidos/ASIN/%s/isbncheckcom-20' % isbn10

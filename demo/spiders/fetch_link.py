@@ -143,8 +143,7 @@ class fetch2Sipder(Spider):
                 if item.split(':')[0] == 'ISBN-10':
                     isbn10 = item.split(':')[1][1:]
 
-            peewee_sql = ebookModel.update(link_pdf=link_pdf, link_txt=link_txt,
-                                           link_online=link_online).where((ebookModel.isbn10 == isbn10))
+            peewee_sql = ebookModel.update(link_online=link_online).where((ebookModel.isbn10 == isbn10))
             peewee_sql.execute()
 
             print ''

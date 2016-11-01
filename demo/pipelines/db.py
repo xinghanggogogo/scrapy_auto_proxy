@@ -11,10 +11,13 @@ from demo.models.ebookmodel import *
 from demo.models.proxymodel import *
 from demo.models.bookmetamodel import *
 from demo.models.bookcommentmodel import *
+from demo.models.tvshowmodel import *
+
 from demo.items.nameItem import *
 from demo.items.ebookItem import *
 from demo.items.proxyItem import *
 from demo.items.bookmetaItem import *
+from demo.items.tvshowItem import *
 from demo.pipelines.stat import *
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import signals
@@ -64,7 +67,7 @@ class DemoPipeline(object):
     #             statfailitem()
     #             pass
 
-        #爬取代理信息，写入json文件
+        #爬取代理信息
         if isinstance(item, proxyItem):
             try:
                 model = proxymodel()
@@ -186,6 +189,39 @@ class DemoPipeline(object):
                     if v is not None:
                         try:
                             if k == 'title':
+                                content += v
+                        except Exception,e:
+                            print "key:",k,"value:",v
+                            print traceback.print_exc()
+                    else:
+                        content += ""
+
+                model.md5 = hashlib.md5(content).hexdigest()
+                model.create_time = datetime.datetime.now()
+                model.update_time = datetime.datetime.now()
+                model.flag = 0
+                model.product = None
+
+                model.save()
+                statsuccessitem()
+
+            except Exception, e:
+                print traceback.print_exc()
+                statfailitem()
+                pass
+
+        if isinstance(item, tvshowItem):
+            try:
+                model = tvshowModel()
+                content = ''
+                for k, v in item.iteritems():
+                    setattr(model, k, v)
+
+                    if v is not None:
+                        try:
+                            if k == 'anchor':
+                                content += v
+                            if k == 'source':
                                 content += v
                         except Exception,e:
                             print "key:",k,"value:",v
