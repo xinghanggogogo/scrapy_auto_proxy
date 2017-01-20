@@ -8,7 +8,7 @@
 
 ## 爬取的代理可以选择存储在项目根目录下的json文件中,也可以选择存储在数据库中,请根据需要在/demo/pipelines/db.py;/demo/middlewares/middlewares.py中更改配置
 
-## 代理选择规则为简单的顺序规则
+## 代理选择规则为最简单的random规则
 
 ## 附带了几个最简单的例子
 ### 爬取'http://wufazhuce.com/' 'one' 每日图片信息
