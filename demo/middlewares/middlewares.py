@@ -16,7 +16,7 @@ class RandomUserAgent(object):
     def __init__(self, agents):
         self.agents = agents
 
-    #通过crawler方法获得setting配置
+    # 通过crawler方法获得setting配置
     @classmethod
     def from_crawler(cls, crawler):
         return cls(crawler.settings.getlist('USER_AGENTS'))
@@ -32,8 +32,7 @@ class ProxyMiddleware(object):
     def __init__(self):
         self.utils = proxy_utils
 
-
-    #通过import方法获得setting配置,配置proxy
+    # 通过import方法获得setting配置,配置proxy
     def process_request(self, request, spider):
         proxy = random.choice(PROXIES)
 
@@ -46,7 +45,6 @@ class ProxyMiddleware(object):
         else:
             print "**********Proxy dont need password:" + proxy['ip_port']
             request.meta['proxy'] = "http://%s" % proxy['ip_port']
-
 
     # 动态抓取proxy自动配置
     # def process_request(self, request, spider):

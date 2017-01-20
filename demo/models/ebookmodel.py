@@ -26,7 +26,7 @@ class ebookModel(BaseModel):
     link_pdf = CharField(null=True, default='')
     link_epub = CharField(null=True, default='')
     link_kindle = CharField(null=True, default='')
-    md5 = CharField(null=True,unique=True, default='')#唯一标识
+    md5 = CharField(null=True,unique=True, default='')
     create_time = DateTimeField(null=True, default='')
     update_time = DateTimeField(null=True, default='')
 
