@@ -40,13 +40,13 @@ class BooksSpider(scrapy.Spider):
             print 10 * '*'
             print ''
 
-            #item = AmazonBooksTypeItem()
+            # item = AmazonBooksTypeItem()
             # item['typeName'] = [n.encode('utf-8') for n in name]
             # item['typeNum'] = [n.encode('utf-8') for n in num]
             # item['typeLink'] = [n.encode('utf-8') for n in link]
             # yield AmazonBooksTypeItem(item)
 
-            #按照page爬取book_list
+            # 按照page爬取book_list
             for i in range(1, 10): #max=5000
                 req = type_link + '&page=' + str(i)
                 yield Request(req, meta={'category':type_name}, callback=self.booksListParse, dont_filter=True)
@@ -76,9 +76,9 @@ class BooksSpider(scrapy.Spider):
             except:
                 author = i.xpath('div[2]/div/span[2]/text()').extract()[0].encode('utf8')
 
-            #暂时忽略第二作者
-            #author2 = i.xpath('div[2]/div/span[3]/a/text()').extract()
-            #author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
+            # 暂时忽略第二作者
+            # author2 = i.xpath('div[2]/div/span[3]/a/text()').extract()
+            # author2 = i.xpath('div[2]/div/span[3]/text()').extract()[0].encode('utf8')
 
             date= i.xpath('div[2]/span[3]/text()').extract()[0].encode('utf8')
 
@@ -135,7 +135,7 @@ class BooksSpider(scrapy.Spider):
 
         name = response.meta['name']
         author = response.meta['author']
-        category = response.meta['category'].lower() #格式处理
+        category = response.meta['category'].lower()  # 格式处理
         book_link = response.meta['link']
         img_url = response.meta['img_url']
         price = response.meta['price']
@@ -145,13 +145,13 @@ class BooksSpider(scrapy.Spider):
         info_path = sel.xpath('.//*[@id="productDetailsTable"]/tr/td/div[1]/ul/li')
         for i in info_path:
             key = i.xpath('b/text()').extract()[0].encode('utf8')[:-1]
-            #print key
+            # print key
 
             if key == 'Publisher':
                 publisher = i.xpath('text()').extract()[0].encode('utf8').split('(')[0][1:-1]
 
             if key == 'ISBN-10':
-                #严格处理isbn10：
+                # 严格处理isbn10：
                 isbn10 = ''
                 isbn10_get = i.xpath('text()').extract()[0].encode('utf8')
                 for i in range(len(isbn10_get)):
@@ -159,14 +159,14 @@ class BooksSpider(scrapy.Spider):
                         isbn10 += isbn10_get[i]
 
             if key == 'ISBN-13':
-                #严格处理isbn13：
+                # 严格处理isbn13：
                 isbn13 = ''
                 isbn13_get = i.xpath('text()').extract()[0].encode('utf8')
                 for i in range(len(isbn13_get)):
                     if '0' <= isbn13_get[i] <= '9' or isbn13_get[i] in ['-', 'x', 'X']:
                         isbn13 += isbn13_get[i]
 
-        #这是一个list
+        # 这是一个list
         introduction = sel.xpath('//*[@id="iframeContent"]/p[1]/span/text()').extract()
         if len(introduction) < 1:
             introduction = sel.xpath('.//*[@id="bookDescription_feature_div"]/noscript/div').extract()

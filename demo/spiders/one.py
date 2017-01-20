@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 __author__ = 'xinghang'
 
-import  sys
+import sys
+import logging
 reload(sys)
 sys.setdefaultencoding('utf8')
 from scrapy.spiders import Spider
 from scrapy.selector import Selector
 from scrapy.http import Request
 import traceback
-#from demo.items.oneItem import *
+
+from demo.items.oneItem import *
 from demo.pipelines.stat import *
 
 
@@ -48,11 +50,12 @@ class oneSipder(Spider):
             print text
             print ''
 
-            # item = oneItem
-            # item['img_url'] = img_url
-            # item['img_author'] = img_author
-            # item['text'] = text
-            # yield item
+            item = oneItem()
+            item['img_url'] = img_url
+            item['img_author'] = img_author
+            item['text'] = text
+            yield item
 
         except Exception,e:
+            logging.error(e)
             print traceback.print_exc()

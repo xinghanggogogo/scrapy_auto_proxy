@@ -101,7 +101,7 @@ class BooksSpider(scrapy.Spider):
     def bookContentParse(self, response):
 
         time.sleep(2)
-        #访问失败
+        # 访问失败
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.bookContentParse, dont_filter=True)
@@ -110,7 +110,7 @@ class BooksSpider(scrapy.Spider):
         sel = Selector(response)
         bookName = response.meta['bookName']
 
-        #这是一个list
+        # 这是一个list
         introduction = sel.xpath('.//*[@id="iframeContent"]').extract()
         if len(introduction) < 1:
             introduction = sel.xpath('.//*[@id="bookDescription_feature_div"]/noscript/div').extract()
@@ -119,7 +119,7 @@ class BooksSpider(scrapy.Spider):
         comment_link = sel.xpath('.//div[@id="revSum"]/div[2]/div/div[1]/a/@href').extract()[0].encode('utf8')
         commentnum = sel.xpath('.//div[@id="revF"]/div/a/text()').extract()[0].encode('utf8')
 
-        #取出数字
+        # 取出数字
         comment_num = ''
         for i in range(len(commentnum[0])):
             if '0' <= commentnum[0][i] <= '9':
@@ -152,7 +152,7 @@ class BooksSpider(scrapy.Spider):
     def bookCommentParse(self, response):
 
         time.sleep(2)
-        #访问失败
+        # 访问失败
         if response.status != 200:
             time.sleep(60)
             yield Request(response.url, meta=response.meta, callback=self.bookCommentParse, dont_filter=True)
