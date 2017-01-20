@@ -23,7 +23,7 @@ class RandomUserAgent(object):
 
     def process_request(self, request, spider):
         random_UA = random.choice(self.agents)
-        request.headers.setdefault('User-Agent', random_UA)
+        request.headers.setdefault('User-Agent', random_UA.setdefault('User_Agetndxinghang'))
         print "**********User-Agent:"+random_UA
 
 

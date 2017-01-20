@@ -43,17 +43,14 @@ class tvSipder(Spider):
             for li in lis:
                 count += 1
                 show_img = li.xpath('a/span/img/@data-original').extract()[0].encode('utf8')
-
                 link = li.xpath('a/@href').extract()[0].encode('utf8')
                 link = '//*[@id="main_page"]/div/div[4]/div/ul/li[1]/a[1]/div[1]/img[4]' + link
                 room_id = link.split('/')[-1]
                 api_url = 'http://open.douyucdn.cn/api/RoomApi/room/'+room_id
-
                 title = li.xpath('a/@title').extract()[0].encode('utf8')
 
                 anchor = li.xpath('a/div/p/span[1]/text()').extract()[0].encode('utf8')
-                category = li.xpath('a/div/div/span/text()').extract()[0].encode('utf8')
-
+                category = li.xpath('a/div/div/span/test()').extract()[0].encode('utf8')
                 num = li.xpath('a/div/p/span[2]/text()').extract()[0].strip()
                 num = format_num(num).split('.')[0]
 

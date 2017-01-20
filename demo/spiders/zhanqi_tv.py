@@ -7,6 +7,8 @@ sys.setdefaultencoding('utf8')
 
 import traceback
 import json
+from scrapy.selector import Selector
+
 
 from scrapy.spiders import Spider
 from demo.items.tvshowItem import *
