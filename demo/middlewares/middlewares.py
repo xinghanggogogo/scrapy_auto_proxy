@@ -48,7 +48,7 @@ class ProxyMiddleware(object):
 
     # 动态抓取proxy自动配置
     # def process_request(self, request, spider):
-    #     proxies = proxymodel.select()
+    #     proxies = proxymodel.select() # 如果选择json存储,请使用文件读写方法重写这个模块
     #     proxy = random.choice(proxies)
     #     while (not self.utils.test_valid(proxy)):
     #         #删除无效代理

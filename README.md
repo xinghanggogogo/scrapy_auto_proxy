@@ -6,6 +6,8 @@
 
 ## 请使用脚本维护爬取的代理的数据库,例如在crontab中根据自己的爬取频率到项目目录执行"scrapy crawl 360_proxy;scrapy crawl xici_proxy"
 
+## 爬取的代理可以选择存储在项目根目录下的json文件中,也可以选择存储在数据库中,请根据需要在/demo/pipelines/db.py;/demo/middlewares/middlewares.py中更改配置
+
 ## 代理选择规则为简单的顺序规则
 
 ## 附带了几个最简单的例子
