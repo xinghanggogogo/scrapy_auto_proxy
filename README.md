@@ -1,6 +1,6 @@
 ### scrapy_auto_proxy
 
-### 基于scrapy自动爬取代理并设置代理
+### 基于scrapy实现自动爬取代理并设置代理
 #### 请根据自己的需要,将/demo/middlewares/middlewares.py中calss ProxyMiddleware的两种代理方法开启或关闭.(注意只能选择一种代理的方法,并且当你选择从import中导入代理的方法时需要你拥有自己的代理服务器,并且在设置在/settings.py中)
 
 ### 介于互联网上的代理网站提供的免费代理可用比例不大,使用代理时每次会先检测代理的可用性,若不可用,则将之移除代理队列
